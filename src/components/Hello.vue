@@ -26,9 +26,23 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
+    };
+  },
+  created () {
+    this.$store.commit('GET_DAYS', {
+      year: 2017,
+      month: 4
+    });
+
+    console.log(this.getMonthDay[3]);
+  },
+  computed: {
+    getMonthDay () {
+      return this.$store.state.monthDays;
     }
   }
-}
+};
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
