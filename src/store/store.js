@@ -8,7 +8,9 @@ Vue.use(Vuex);
 const state = {
 	// 12 month days
 	monthDays: [],
-	num: 0
+	year: 2000,
+	month: 8,
+	firstDay: 1
 };
 
 // Store实例
