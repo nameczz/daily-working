@@ -1,13 +1,21 @@
 <template>
   <div class="calendar">
-    <table>
-    	<tr>
-    		<td v-for="day in week">{{ day }}</td>
-    	</tr>
-    	<tr v-for="week in everyDay">
-    		<td v-for="day in week[1]">{{ day }}</td>
-    	</tr>
-    </table>
+  	<template v-if="showType === 'month'"> 
+	    <table>
+	    	<tr v-for="week in everyDay">
+	    		<td v-for="day in week[1]">{{ day }}</td>
+	    	</tr>
+	    	<br/>
+	    </table>
+	  </template>
+	  <!-- 日视图 -->
+	  <template v-else-if="showType === 'week'">
+	  	<table>
+	  		<tr>
+	  			<td v-for="day in everyDay[week][1]">{{ day }}</td>
+	  		</tr>
+	  	</table>
+	  </template>
   </div>
 </template>
 
@@ -15,9 +23,22 @@
 import {mapState} from 'vuex';
 
 export default {
+	props: {
+		month: {
+			type: Number,
+			default: -1
+		},
+		week: {
+			type: String,
+			default: 'three'
+		},
+		showType: {
+			type: String,
+			default: 'month'
+		}
+	},
 	data () {
 		return {
-			week: ['日', '一', '二', '三', '四', '五', '六'],
 			// key[0] --- day length for week in this month .. key[1] --- 7 dates in this week
 			everyDay: {
 				'one': [0, []],
@@ -43,10 +64,10 @@ export default {
 	methods: {
 		// init
 		_init () {
+			let month = this.month === -1 ? this.getMonth : this.month;
 			this.currentTime();
 			this._pushDays();
-			this._getEveryAndFirstDay();
-			this._getDaysArr();
+			this._getDaysArr(month);
 		},
 		// get current year && month && firstDay
 		currentTime () {
@@ -64,11 +85,12 @@ export default {
 			}
 		},
 		// get one month days length
-		_getEveryAndFirstDay () {
-			this.$store.commit('GET_FIRSTDAY', new Date(this.getYear, this.getMonth, 1).getDay());
+		_getEveryAndFirstDay (month) {
+			// get firstday in this month
+			this.$store.commit('GET_FIRSTDAY', new Date(this.getYear, month, 1).getDay());
 
 			let firstWeek = this.getFirstDay === 7 ? 7 : 7 - this.getFirstDay;
-			let monthDays = this.getDays[this.getMonth];
+			let monthDays = this.getDays[month];
 			let lastWeek = (monthDays - firstWeek) % 7;
 			let weeks = Math.floor((monthDays - firstWeek) / 7);
 
@@ -89,18 +111,21 @@ export default {
 			}
 		},
 		// get 7 dates in every week
-		_getDaysArr () {
-			let monthDays = this.getDays[this.getMonth];
-			let prevMonthDays = this.getDays[this.getMonth - 1];
+		_getDaysArr (month) {
+			this._getEveryAndFirstDay(month);
+			console.log(this.everyDay);
+			let monthDays = this.getDays[month];
+			let prevMonthDays = month === 0 ? this.getDays[11] : this.getDays[month - 1];
 			let firstWeek = this.everyDay['one'][0];
 			let preDays = 7 - firstWeek;
 			let day = 1;
 
 			for (let key in this.everyDay) {
 				let length = 7;
+				let weekDays = this.everyDay[key][0];
 				this.everyDay[key][1] = [];
 
-				if (this.everyDay[key][0] === 0) return;
+				if (weekDays === 0) return;
 				// first week
 				if (key === 'one') {
 					while (firstWeek > 0) {
@@ -117,15 +142,15 @@ export default {
 
 					continue;
 				}
-
+				// last weeks
 				if (this.everyDay[key][0] === 7) {
 					while (length > 0) {
 						this.everyDay[key][1].push(day);
 						day++;
 						length--;
 					}
-				} else if (this.everyDay[key][0] !== 0) {
-					let lastDays = 7 - this.everyDay[key][0];
+				} else if (weekDays !== 0) {
+					let lastDays = 7 - weekDays;
 					let lastDay = 1;
 
 					while (day <= monthDays) {
@@ -140,14 +165,14 @@ export default {
 					}
 				}
 			}
-			console.log(this.everyDay);
 		}
 	}
 };
 </script>
 
 <style lang="stylus" >
-  
+
+  	
       
 
 </style>
