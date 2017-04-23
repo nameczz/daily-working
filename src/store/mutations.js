@@ -2,7 +2,8 @@ import {
 	GET_DAYS,
 	GET_MONTH,
 	GET_YEAR,
-	GET_FIRSTDAY
+	GET_FIRSTDAY,
+	GET_TODAY
 } from './mutation-types.js';
 import Vue from 'vue';
 
@@ -24,5 +25,12 @@ export default {
 	},
 	[GET_FIRSTDAY] (state, firstDay) {
 		state.firstDay = firstDay;
+	},
+	[GET_TODAY] (state) {
+		let date = new Date();
+		let year = date.getFullYear();
+		let month = date.getMonth();
+		let day = date.getDate();
+		state.today.push(year, month, day);
 	}
 };

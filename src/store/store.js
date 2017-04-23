@@ -10,7 +10,8 @@ const state = {
 	monthDays: [],
 	year: 2000,
 	month: 8,
-	firstDay: 1
+	firstDay: 1,
+	today: []
 };
 
 // Store实例

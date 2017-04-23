@@ -1,42 +1,84 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <div class="calendar-view">
-      <div class="calendar-wrapper">
-        <template v-for="month in year">
-          <calendar :month="month" class="month"></calendar>
-        </template>
-      </div>
+    <v-header></v-header>
+    <div class="content">
+      <content-header
+        :width="viewWidth"
+        :height="viewHeight"
+      >  
+      </content-header>
+      <div></div>
+      <footer>
+        <span class="circle"></span>
+
+      </footer>
     </div>
-    
+
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import calendar from 'components/calendar/calendar';
+import contentHeader from 'components/content-header/content-header';
+import header from 'components/header/header';
 
 export default {
   data () {
+    let width = document.documentElement.clientWidth;
+    let height = document.documentElement.clientHeight;
+
     return {
-      year: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+      viewWidth: width - 0.04 * width,
+      viewHeight: height - 0.04 * height
     };
   },
+  watch: {
+    // watch document.documentElement.clientWidth && clientHeight
+    viewWidth (val) {
+      this.viewWidth = val;
+      console.log(this.viewWidth);
+    },
+    viewHeight (val) {
+      this.viewHeight = val;
+      console.log(this.viewHeight);
+    }
+  },
+  mounted () {
+      const that = this;
+      // watch viewSize
+      window.onresize = () => {
+          return (() => {
+              let width = document.documentElement.clientWidth;
+              let height = document.documentElement.clientHeight;
+
+              that.viewWidth = Math.floor(width - 0.04 * width);
+              that.viewHeight = Math.floor(height - 0.04 * height);
+          })();
+      };
+  },
   components: {
-    'calendar': calendar
+    'v-header': header,
+    'content-header': contentHeader
   }
 };
 </script>
 
 <style lang="stylus" >
-  .calendar-view
-    width: 140px
-    overflow: hidden
-    overflow-x:scroll
-    .calendar-wrapper
-      width: 3000px
-      .month
-        display: inline-block
-        
+  #app
+    padding: 2%
+    .content
+      display: relative
+      width: 100%
+      margin: 0 auto
+      border-radius: 10px
+      background: #fff
+      overflow: hidden
+      footer
+        display: fixed
+        width: 100%
+        height: 96px
+        bottom: 0
+        left: 0
+        border-radius: 0 0 10px 10px
 
 </style>

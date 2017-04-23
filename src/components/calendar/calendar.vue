@@ -1,9 +1,9 @@
 <template>
   <div class="calendar">
   	<template v-if="showType === 'month'"> 
-	    <table>
-	    	<tr v-for="week in everyDay">
-	    		<td v-for="day in week[1]">{{ day }}</td>
+	    <table class="day-wrapper">
+	    	<tr v-for="week in everyDay" class="week">
+	    		<td v-for="day in week[1]" class="day" :width="tdWidth" height="50">{{ day }}</td>
 	    	</tr>
 	    	<br/>
 	    </table>
@@ -35,6 +35,9 @@ export default {
 		showType: {
 			type: String,
 			default: 'month'
+		},
+		tdWidth: {
+			type: Number
 		}
 	},
 	data () {
@@ -171,8 +174,12 @@ export default {
 </script>
 
 <style lang="stylus" >
-
+	.calendar
+		width: 100%
+		.day-wrapper
+			.week
+				.day
+					margin: 10px
   	
       
-
 </style>
