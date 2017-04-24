@@ -36,11 +36,9 @@ export default {
     // watch document.documentElement.clientWidth && clientHeight
     viewWidth (val) {
       this.viewWidth = val;
-      console.log(this.viewWidth);
     },
     viewHeight (val) {
       this.viewHeight = val;
-      console.log(this.viewHeight);
     }
   },
   mounted () {

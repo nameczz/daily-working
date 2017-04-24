@@ -116,7 +116,6 @@ export default {
 		// get 7 dates in every week
 		_getDaysArr (month) {
 			this._getEveryAndFirstDay(month);
-			console.log(this.everyDay);
 			let monthDays = this.getDays[month];
 			let prevMonthDays = month === 0 ? this.getDays[11] : this.getDays[month - 1];
 			let firstWeek = this.everyDay['one'][0];
@@ -179,7 +178,7 @@ export default {
 		.day-wrapper
 			.week
 				.day
-					margin: 10px
+					text-align: center
   	
       
 </style>
