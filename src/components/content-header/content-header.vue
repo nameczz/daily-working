@@ -8,6 +8,7 @@
     <div ref="calendarWrapper">
       <ul class="calendar-wrapper" id="calendar-wrapper" >
         <li v-for="month in year" class="month">
+          <h1 style="text-align: center">{{month}}</h1>
           <calendar :td-width="tdWidth" :month="month"></calendar>
         </li>
       </ul>
@@ -33,7 +34,8 @@ export default {
       week: ['日', '一', '二', '三', '四', '五', '六'],
       year: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
       oldPos: 0,
-      endPos: 0
+      endPos: 0,
+      gap: 20
     };
   },
   created () {
@@ -70,10 +72,12 @@ export default {
       this.calendarScroll = new BScroll(this.$refs.calendarWrapper, {
         startX: -this.width * this.$store.state.month + this.$store.state.month + 1,
         scrollX: true,
-        probeType: 3
+        probeType: 3,
+        momentum: false
       });
 
       this.calendarScroll.on('scrollStart', () => {
+        console.log(this.calendarScroll.startX);
         this.oldPos = this.calendarScroll.startX;
       });
 
@@ -82,11 +86,57 @@ export default {
       });
 
       this.calendarScroll.on('scrollEnd', () => {
-        let moveLine = Math.floor(this.width / 2);
-        console.log(moveLine);
-        console.log(Math.abs(this.oldPos - this.endPos));
+        let moveLine = Math.floor(this.width / 2) - Math.floor(this.width / 8);
+        let that = this;
+        let gap = this.gap;
         if (Math.abs(this.oldPos - this.endPos) < moveLine) {
-          this.calendarScroll.scrollTo(this.oldPos, this.calendarScroll.startY);
+          // right
+          if (this.oldPos > this.endPos) {
+            let runId = setInterval(function () {
+              that.calendarScroll.scrollTo(that.endPos, that.calendarScroll.startY);
+              if (that.endPos < that.oldPos) {
+                that.endPos += gap;
+              } else {
+                that.calendarScroll.scrollTo(that.oldPos, that.calendarScroll.startY);
+                clearInterval(runId);
+              }
+            }, 10);
+          } else {
+            // left
+           let runId = setInterval(function () {
+              that.calendarScroll.scrollTo(that.endPos, that.calendarScroll.startY);
+              if (that.endPos > that.oldPos) {
+                that.endPos -= gap;
+              } else {
+                that.calendarScroll.scrollTo(that.oldPos, that.calendarScroll.startY);
+                clearInterval(runId);
+              }
+            }, 10);
+          }
+        } else {
+          if (this.oldPos > this.endPos) {
+            let destination = this.oldPos - this.width + this.$store.state.month - this.$store.state.month / 2;
+            let runId = setInterval(function () {
+              that.calendarScroll.scrollTo(that.endPos, that.calendarScroll.startY);
+              if (that.endPos > destination) {
+                that.endPos -= gap;
+              } else {
+                that.calendarScroll.scrollTo(destination, that.calendarScroll.startY);
+                clearInterval(runId);
+              }
+            }, 10);
+          } else {
+            let destination = this.oldPos + this.width - this.$store.state.month + this.$store.state.month / 2;
+            let runId = setInterval(function () {
+              that.calendarScroll.scrollTo(that.endPos, that.calendarScroll.startY);
+              if (that.endPos < destination) {
+                that.endPos += gap;
+              } else {
+                that.calendarScroll.scrollTo(destination, that.calendarScroll.startY);
+                clearInterval(runId);
+              }
+            }, 10);
+          }
         }
       });
     }
