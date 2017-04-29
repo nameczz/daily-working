@@ -3,7 +3,8 @@ import {
 	GET_MONTH,
 	GET_YEAR,
 	GET_FIRSTDAY,
-	GET_TODAY
+	GET_TODAY,
+	GET_CREATEDYEARS
 } from './mutation-types.js';
 import Vue from 'vue';
 
@@ -25,6 +26,14 @@ export default {
 	},
 	[GET_FIRSTDAY] (state, firstDay) {
 		state.firstDay = firstDay;
+	},
+	[GET_CREATEDYEARS] (state, year) {
+		let allMonth = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+		if (!state.createdYears[year]) {
+			Vue.set(state.createdYears, year, allMonth);
+		} else {
+			return;
+		}
 	},
 	[GET_TODAY] (state) {
 		let date = new Date();

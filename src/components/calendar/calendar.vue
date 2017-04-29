@@ -2,8 +2,8 @@
   <div class="calendar">
   	<template v-if="showType === 'month'"> 
 	    <table class="day-wrapper">
-	    	<tr v-for="week in everyDay" class="week">
-	    		<td v-for="day in week[1]" class="day" :width="tdWidth" height="50">{{ day }}</td>
+	    	<tr v-for="(week, key) in everyDay" class="week">
+	    		<td v-for="day in week[1]" class="day" :class="{ white: _extraDayClass(key, day) }" :width="tdWidth" height="50">{{ day }}</td>
 	    	</tr>
 	    	<br/>
 	    </table>
@@ -25,6 +25,10 @@ import {mapState} from 'vuex';
 export default {
 	props: {
 		month: {
+			type: Number,
+			default: -1
+		},
+		year: {
 			type: Number,
 			default: -1
 		},
@@ -50,7 +54,8 @@ export default {
 				'four': [0, []],
 				'five': [0, []],
 				'six': [0, []]
-			}
+			},
+			active: true
 		};
 	},
 	created () {
@@ -80,9 +85,10 @@ export default {
 		},
 		// push day length for 12 month
 		_pushDays () {
+			let _year = this.year === -1 ? this.getYear : this.month;
 			for (let i = 1; i < 13; i++) {
 				this.$store.commit('GET_DAYS', {
-					year: this.getYear,
+					year: _year,
 					month: i
 				});
 			}
@@ -90,7 +96,8 @@ export default {
 		// get one month days length
 		_getEveryAndFirstDay (month) {
 			// get firstday in this month
-			this.$store.commit('GET_FIRSTDAY', new Date(this.getYear, month, 1).getDay());
+			let _year = this.year === -1 ? this.getYear : this.month;
+			this.$store.commit('GET_FIRSTDAY', new Date(_year, month, 1).getDay());
 
 			let firstWeek = this.getFirstDay === 7 ? 7 : 7 - this.getFirstDay;
 			let monthDays = this.getDays[month];
@@ -167,6 +174,15 @@ export default {
 					}
 				}
 			}
+		},
+		_extraDayClass (week, day) {
+			if (week === 'one') {
+				return day > 7 ? 1 : false;
+			} else if (week === 'five' || week === 'six') {
+				return day < 7 ? 1 : false;
+			} else {
+				return false;
+			}
 		}
 	}
 };
@@ -179,6 +195,8 @@ export default {
 			.week
 				.day
 					text-align: center
+				.white
+					color: #909090
   	
       
 </style>

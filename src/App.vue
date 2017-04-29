@@ -28,8 +28,8 @@ export default {
     let height = document.documentElement.clientHeight;
 
     return {
-      viewWidth: width - 0.04 * width,
-      viewHeight: height - 0.04 * height
+      viewWidth: Math.floor(width - 0.04 * width),
+      viewHeight: Math.floor(height - 0.04 * height)
     };
   },
   watch: {

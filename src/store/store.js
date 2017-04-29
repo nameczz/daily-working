@@ -8,10 +8,12 @@ Vue.use(Vuex);
 const state = {
 	// 12 month days
 	monthDays: [],
-	year: 2000,
+	// current year
+	year: 2017,
 	month: 8,
 	firstDay: 1,
-	today: []
+	today: [],
+	createdYears: {}
 };
 
 // Store实例
